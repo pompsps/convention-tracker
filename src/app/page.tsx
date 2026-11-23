@@ -21,10 +21,10 @@ export default function Home() {
 
   return (
     <div className="flex h-screen">
+      <VerticalNav activePage={activePage} onPageChange={setActivePage} />
       <div className="flex-1 overflow-y-auto p-4 mb-20">
         {pages[activePage]}
       </div>
-      <VerticalNav activePage={activePage} onPageChange={setActivePage} />
     </div>
   );
 }

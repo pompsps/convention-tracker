@@ -53,8 +53,10 @@ export default function VerticalNav({
         <button
           onClick={() => setCollapsed(!collapsed)}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="absolute top-3 left-3 z-10 size-9 p-1.5 rounded-full text-white hover:bg-white/10">
-          <Bars3Icon />
+          className={`absolute top-3 left-3 z-10 size-9 p-1.5 rounded-full text-white hover:bg-white/10 `}>
+          <Bars3Icon
+            className={`${collapsed ? "text-(--text-secondary)" : "text-accent"}`}
+          />
         </button>
 
         <div
