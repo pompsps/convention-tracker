@@ -104,14 +104,14 @@ export default function Products() {
                     </div>
                     <ItemImage blob={item.image} alt={item.name} />
                   </div>
-                  <div className="row-span-2 p-2">
+                  <div className="row-span-2 p-2 flex flex-col w-full">
                     <div>
-                      <p className="font-bold">{item.name}</p>
-                      <p className="text-sm text-neutral-500">
+                      <p className="font-bold text-sm">{item.name}</p>
+                      <p className="text-xs text-neutral-500">
                         {item.category}
                       </p>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex w-full justify-end">
                       <p className="font-semibold">{peso(item.price)}</p>
                     </div>
                   </div>
