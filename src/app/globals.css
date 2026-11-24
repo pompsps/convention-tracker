@@ -34,12 +34,12 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #075e48;
   }
-}
+} */
 
 body {
   background: var(--background);

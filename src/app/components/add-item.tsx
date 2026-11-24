@@ -14,13 +14,14 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
   const [type, setType] = useState("");
   const [stock, setStock] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [isHidden, setIsHidden] = useState(false);
+  //   const [isHidden, setIsHidden] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     await db.items.add({
       name,
       price: Number(price),
+      type,
       category,
       stock: stock ? Number(stock) : undefined,
       image: file ?? undefined, // a File is a Blob, so it stores directly
@@ -28,6 +29,7 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
     setName("");
     setPrice("");
     setStock("");
+    setType("");
     setCategory("");
     setFile(null);
     onClose();
@@ -83,7 +85,6 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
                   type="button"
                   onClick={() => {
                     setFile(null);
-                    setIsHidden(false);
                   }}
                   aria-label="Remove Photo"
                   className="absolute z-20 -top-3 -right-3 rounded-full bg-red-400 p-2 text-white hover:bg-red-600">
@@ -92,18 +93,16 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
               </div>
             </div>
           )}
-          <label className="p-2 size-30 place-items-center flex flex-col outline-dashed text-black/40 rounded-2xl">
+          <label
+            className={`p-2 size-30 place-items-center flex flex-col outline-dashed text-black/40 rounded-2xl ${file ? "hidden" : "blocks"}`}>
             <input
               hidden
               type="file"
               accept="image/*"
               id="choose-file"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              onClick={() => setIsHidden(true)}
             />{" "}
-            <span
-              aria-hidden="true"
-              className={`${isHidden ? "hidden" : "blocks"}`}>
+            <span aria-hidden="true">
               <PlusIcon />
               Upload file
             </span>
@@ -133,19 +132,19 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
           required
         />
         <select
-          value={category}
+          value={type}
           className="col-span-2 focus:outline-none border border-background rounded-lg p-2 w-full appearance-none"
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={(e) => setType(e.target.value)}
           required>
           <option value="" disabled hidden>
             Select Type
           </option>
-          {typeList.map((c) => (
+          {typeList.map((t) => (
             <option
-              key={c.value}
-              value={c.value}
+              key={t.value}
+              value={t.value}
               className="border border-background rounded">
-              {c.value}
+              {t.value}
             </option>
           ))}
         </select>

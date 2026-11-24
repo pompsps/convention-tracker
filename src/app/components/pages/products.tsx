@@ -21,7 +21,7 @@ export default function Products() {
   const productCount = useLiveQuery(() => db.items.count());
   const items = useLiveQuery(() => db.items.toArray());
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("All");
+  const [type, setType] = useState("All");
 
   const [addItem, setAddItem] = useState(false);
   const [deleteItem, setDeleteItem] = useState<Item | null>(null);
@@ -30,10 +30,10 @@ export default function Products() {
 
   if (!items) return <p>Loading...</p>; // ← after ALL hooks
 
-  const categories = ["All", ...new Set(items.map((i) => i.category))];
+  const types = ["All", ...new Set(items.map((i) => i.type))];
   const visible = items.filter(
     (i) =>
-      (category === "All" || i.category === category) &&
+      (type === "All" || i.type === type) &&
       i.name.toLowerCase().includes(query.toLowerCase()),
   );
 
@@ -83,12 +83,12 @@ export default function Products() {
       <div
         className={`flex flex-col gap-3 bg-(--accent) ${collapse ? "hidden" : "block"}`}>
         <div className="grid grid-cols-6 overflow-x-auto gap-2">
-          {categories.map((c) => (
+          {types.map((t) => (
             <a
-              key={c}
-              onClick={() => setCategory(c)}
-              className={`col-span-2 overflow-hidden rounded-full bg-background p-2 text-(--text-main) place-content-center flex  ${category === c ? "bg-purple-800 text-white col-span-2  transition-color duration-300 ease-in-out" : "bg-background-30"}`}>
-              <h2 className="text-xs ">{c}</h2>
+              key={t}
+              onClick={() => setType(t)}
+              className={`col-span-2 overflow-hidden rounded-full bg-background p-2 text-(--text-main) place-content-center flex  ${type === t ? "bg-purple-800 text-white col-span-2  transition-color duration-300 ease-in-out" : "bg-background-30"}`}>
+              <h2 className="text-xs ">{t}</h2>
             </a>
           ))}
         </div>
@@ -126,9 +126,7 @@ export default function Products() {
                   <div>
                     <div className="row-span-1">
                       <p className="font-bold text-sm">{item.name}</p>
-                      <p className="text-xs text-neutral-500">
-                        {item.category}
-                      </p>
+                      <p className="text-xs text-neutral-500">{item.type}</p>
                     </div>
                     <div className="flex w-full justify-between place-items-center row-span-1">
                       <p className="font-semibold">{peso(item.price)}</p>

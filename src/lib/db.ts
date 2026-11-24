@@ -5,6 +5,7 @@ export type Item = {
   id: number;
   name: string;
   price: number;
+  type: string;
   category: string;
   stock?: number;
   image?: Blob; // the photo itself, stored in the DB

@@ -6,12 +6,12 @@ import { Item, peso } from "../../lib/data";
 
 export default function ProductGrid({ items }: { items: Item[] }) {
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("All");
+  const [type, setType] = useState("All");
 
-  const categories = ["All", ...new Set(items.map((i) => i.category))];
+  const categories = ["All", ...new Set(items.map((i) => i.type))];
   const visible = items.filter(
     (i) =>
-      (category === "All" || i.category === category) &&
+      (type === "All" || i.type === type) &&
       i.name.toLowerCase().includes(query.toLowerCase()),
   );
 
@@ -28,9 +28,9 @@ export default function ProductGrid({ items }: { items: Item[] }) {
         {categories.map((c) => (
           <button
             key={c}
-            onClick={() => setCategory(c)}
+            onClick={() => setType(c)}
             className={`shrink-0 rounded-full px-4 py-2 text-sm ${
-              category === c ? "bg-emerald-700 text-white" : "bg-neutral-100"
+              type === c ? "bg-emerald-700 text-white" : "bg-neutral-100"
             }`}>
             {c}
           </button>
@@ -51,7 +51,7 @@ export default function ProductGrid({ items }: { items: Item[] }) {
               {/* photo goes here */}
               <div>
                 <p className="font-medium">{item.name}</p>
-                <p className="text-sm text-neutral-500">{item.category}</p>
+                <p className="text-sm text-neutral-500">{item.type}</p>
               </div>
               <div className="flex items-center justify-between">
                 <p className="font-semibold">{peso(item.price)}</p>
