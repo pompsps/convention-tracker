@@ -32,18 +32,22 @@ export default function VerticalNav({
   return (
     <>
       {/* Mobile: floating bottom bar, hidden from md and up */}
-      <nav className="md:hidden bottom-2 inset-x-5 z-20 flex justify-between items-center p-2 rounded-full bg-(--accent) border border-black/30 m-4">
+      <nav className="md:hidden bottom-2 z-20 flex rounded-full bg-(--accent) border border-(--accent-secondary) m-4 overflow-hidden p-2 gap-2">
         {appPages.map((p) => (
-          <button
+          <div
             key={p.id}
-            onClick={() => onPageChange(p.id)}
-            className={`flex w-15 justify-center items-center rounded-full p-2 transition-colors duration-300 text-(--text-secondary) ${
+            className={`flex w-full justify-center items-center p-2 transition-animation ease-in-out duration-300 text-(--text-secondary) rounded-full ${
               activePage === p.id
-                ? "bg-background text-white"
+                ? "bg-(--accent-secondary) text-white "
                 : "text-black hover:bg-white/10"
             }`}>
-            <span className="block w-5 ">{p.icon}</span>
-          </button>
+            <button onClick={() => onPageChange(p.id)}>
+              <span className="block w-5">{p.icon}</span>
+            </button>
+            {/* <span className="flex text-xs justify-center items-center">
+              {p.title}
+            </span> */}
+          </div>
         ))}
       </nav>
 

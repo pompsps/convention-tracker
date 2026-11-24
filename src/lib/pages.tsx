@@ -33,7 +33,7 @@ export const appPages: AppPage[] = [
     id: "products",
     title: "Inventory",
     subtitle: "Your entire collection",
-    icon: <ArchiveBoxIcon className="text-(--accent-secondary)" />,
+    icon: <ArchiveBoxIcon />,
     Component: Products,
   },
   { id: "sales", title: "Sales", icon: <SparklesIcon />, Component: Sales },
