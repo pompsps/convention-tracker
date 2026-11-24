@@ -11,6 +11,7 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
+  const [type, setType] = useState("");
   const [stock, setStock] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [isHidden, setIsHidden] = useState(false);
@@ -32,7 +33,7 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
     onClose();
   }
 
-  const categoryList = [
+  const typeList = [
     {
       value: "Stickers",
     },
@@ -137,9 +138,9 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
           onChange={(e) => setCategory(e.target.value)}
           required>
           <option value="" disabled hidden>
-            Select Category
+            Select Type
           </option>
-          {categoryList.map((c) => (
+          {typeList.map((c) => (
             <option
               key={c.value}
               value={c.value}
