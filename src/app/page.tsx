@@ -12,8 +12,8 @@ export default function Home() {
   const { Component } = current;
 
   return (
-    <div className="flex h-screen relative flex-col overflow-y-auto gap-2">
-      <div className="flex-1 overflow-y-auto h-auto m-4">
+    <div className="flex h-screen relative flex-col overflow-y-auto">
+      <div className="flex-1 overflow-y-auto h-auto m-4 mb-0">
         <PageContainer title={current.title}>
           <Component />
         </PageContainer>

@@ -20,7 +20,7 @@ export default function PageContainer({
           <span className="text-(--accent-secondary) size-10">{title}</span>
         </div>
       </div>
-      <div className="bg-(--accent) flex min-h-0 flex-1 flex-col rounded-lg p-5 text-(--text-main)">
+      <div className="bg-(--accent) flex min-h-0 flex-col rounded-lg p-5 text-(--text-main)">
         {children}
       </div>
     </div>

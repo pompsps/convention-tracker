@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Concert_One, Cherry_Bomb_One } from "next/font/google";
+import { Concert_One } from "next/font/google";
 import "./globals.css";
 
 const concertOne = Concert_One({
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${concertOne.className} h-full antialiased`}>
+    <html lang="en" className={`${concertOne.className} h-full antialiased `}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

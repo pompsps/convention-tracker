@@ -59,7 +59,7 @@ export default function Products() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 bg-background rounded-xl p-2 shrink-0">
+        <div className="grid grid-cols-3 gap-1 bg-background rounded-2xl p-1 shrink-0">
           <div className="col-span-2 flex place-items-center gap-2 bg-(--accent) rounded-xl border border-neutral-300 p-1">
             <MagnifyingGlassIcon className="size-8" />
             <input
@@ -106,34 +106,51 @@ export default function Products() {
               <a
                 key={item.id}
                 className="rounded-xl border border-neutral-400 w-full relative h-full overflow-hidden flex flex-col">
-                <div className="size-full rounded-xl bg-neutral-100 relative row-span-4 items-center justify-center flex">
-                  <div className="absolute top-0 right-0 p-2">
+                <div className="size-full rounded-xl bg-neutral-100 relative row-span-4 items-center justify-center flex object-cover">
+                  {/* <div className="absolute bottom-0 left-0 p-1">
                     {item.stock !== undefined && (
                       <span
-                        className={`text-xs rounded-full px-2 py-1 border ${
+                        className={`text-sm rounded-lg px-2 py-1 border ${
                           item.stock <= 5
                             ? "bg-red-100 text-red-700"
                             : "bg-neutral-100 text-neutral-600"
                         }`}>
-                        {item.stock}pcs
+                        {item.stock} pcs
                       </span>
                     )}
-                  </div>
+                  </div> */}
                   <ItemImage blob={item.image} alt={item.name} />
                 </div>
-                <div className="grid-rows-2 p-2 flex flex-col w-full justify-between">
-                  <div className="row-span-1">
-                    <p className="font-bold text-sm">{item.name}</p>
-                    <p className="text-xs text-neutral-500">{item.category}</p>
-                  </div>
-                  <div className="flex w-full justify-between place-items-center row-span-1">
-                    <p className="font-semibold">{peso(item.price)}</p>
-                    {/* <button
+                <div className="flex flex-col p-2 w-full justify-between">
+                  <div>
+                    <div className="row-span-1">
+                      <p className="font-bold text-sm">{item.name}</p>
+                      <p className="text-xs text-neutral-500">
+                        {item.category}
+                      </p>
+                    </div>
+                    <div className="flex w-full justify-between place-items-center row-span-1">
+                      <p className="font-semibold">{peso(item.price)}</p>
+                      {/* <button
                       onClick={() => setDeleteItem(item)}
                       aria-label={`Delete ${item.name}`}
                       className=" rounded-full bg-red-400 p-2 text-white hover:bg-red-600">
                       <TrashIcon className="size-4" />
-                    </button> */}
+                      </button> */}
+                    </div>
+                  </div>
+                  <div className="flex justify-between place-items-center">
+                    <span className="text-xs">In Stock</span>
+                    {item.stock !== undefined && (
+                      <span
+                        className={`text-sm rounded-lg px-2 py-1 border ${
+                          item.stock <= 5
+                            ? "bg-red-100 text-red-700"
+                            : "bg-neutral-100 text-neutral-600"
+                        }`}>
+                        {item.stock} pcs
+                      </span>
+                    )}
                   </div>
                 </div>
               </a>
