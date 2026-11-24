@@ -7,15 +7,25 @@ import { peso } from "@/src/lib/data";
 import { useState } from "react";
 import ItemImage from "@/src/app/components/item-image";
 
-import { PlusIcon, TrashIcon } from "@heroicons/react/16/solid";
+import {
+  PlusIcon,
+  TrashIcon,
+  MagnifyingGlassIcon,
+  XCircleIcon,
+  PlusCircleIcon,
+  ShoppingBagIcon,
+} from "@heroicons/react/16/solid";
 
-export default function Products({ item }: { item: string }) {
+export default function Products() {
+  const productCount = useLiveQuery(() => db.items.count());
   const items = useLiveQuery(() => db.items.toArray());
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("All"); // ← move up here
+  const [category, setCategory] = useState("All");
 
   const [addItem, setAddItem] = useState(false);
   const [deleteItem, setDeleteItem] = useState<Item | null>(null);
+
+  const [collapse, setCollapse] = useState(true);
 
   if (!items) return <p>Loading...</p>; // ← after ALL hooks
 
@@ -27,93 +37,111 @@ export default function Products({ item }: { item: string }) {
   );
 
   return (
-    <>
-      <div className="bg-(--accent) w-full h-fit gap-5 flex flex-col rounded-lg p-10 text-(--text-main) relative">
-        <div>
-          <h1 className="text-2xl font-bold">Inventory</h1>
-          <p className="text-sm">Your entire collection</p>
+    <div className="gap-2 flex flex-col h-full min-h-0">
+      <div className="gap-2 flex flex-col">
+        <div className="grid-cols-3 grid">
+          <div className="col-span-2">
+            <div className="flex flex-col">
+              <span>Your Stash</span>
+              <span>{productCount} products total!</span>
+            </div>
+          </div>
+          <div className="col-span-1 gap-2 bg-(--accent-secondary) shrink-0 p-1 rounded-xl flex-col justify-center items-center">
+            <button
+              type="button"
+              onClick={() => {
+                setAddItem(!addItem);
+                setCollapse(true);
+              }}
+              className="text-(--accent) rounded-xl p-2 bg-(--accent-secondary) justify-center items-center flex w-full col-span-1 col-start-3">
+              <span>Add Item</span>
+            </button>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-3 sticky top-0 z-50 bg-(--accent)">
-          <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-3 gap-2 bg-background rounded-xl p-2 shrink-0">
+          <div className="col-span-2 flex place-items-center gap-2 bg-(--accent) rounded-xl border border-neutral-300 p-1">
+            <MagnifyingGlassIcon className="size-8" />
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search items..."
-              className="col-span-2 w-full rounded-xl border border-neutral-300 px-4 py-3 focus:outline-0"
+              className="focus:outline-none w-full "
             />
-            <div
-              onClick={() => setAddItem(!addItem)}
-              className="bg-(--accent-secondary) text-(--accent) text-xs rounded justify-center items-center w-full flex">
-              Add item
-            </div>
-
-            {addItem && <AddItemForm onClose={() => setAddItem(false)} />}
           </div>
-          <hr />
-          <div className="flex overflow-x-auto gap-2">
-            {categories.map((c) => (
+          <button
+            onClick={() => setCollapse(!collapse)}
+            className="rounded-xl bg-(--accent) w-full">
+            Filters
+          </button>
+        </div>
+      </div>
+
+      {addItem && <AddItemForm onClose={() => setAddItem(false)} />}
+
+      <div
+        className={`flex flex-col gap-3 bg-(--accent) ${collapse ? "hidden" : "block"}`}>
+        <div className="grid grid-cols-6 overflow-x-auto gap-2">
+          {categories.map((c) => (
+            <a
+              key={c}
+              onClick={() => setCategory(c)}
+              className={`col-span-2 overflow-hidden rounded-full bg-background p-2 text-(--text-main) place-content-center flex  ${category === c ? "bg-purple-800 text-white col-span-2  transition-color duration-300 ease-in-out" : "bg-background-30"}`}>
+              <h2 className="text-xs ">{c}</h2>
+            </a>
+          ))}
+        </div>
+        <hr />
+      </div>
+
+      {/* Cards */}
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        {visible.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-neutral-300 p-10 text-center text-neutral-500">
+            No items found. Add your first item to start selling.
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2 z-10 overflow-scroll">
+            {visible.map((item) => (
               <a
-                key={c}
-                onClick={() => setCategory(c)}
-                className={`rounded-lg bg-background p-2 text-(--text-main) ${category === c ? "bg-purple-800 text-white" : "bg-background-30"}`}>
-                <h2 className="text-xs ">{c}</h2>
+                key={item.id}
+                className="rounded-xl border border-neutral-400 w-full relative h-full overflow-hidden flex flex-col">
+                <div className="size-full rounded-xl bg-neutral-100 relative row-span-4 items-center justify-center flex">
+                  <div className="absolute top-0 right-0 p-2">
+                    {item.stock !== undefined && (
+                      <span
+                        className={`text-xs rounded-full px-2 py-1 border ${
+                          item.stock <= 5
+                            ? "bg-red-100 text-red-700"
+                            : "bg-neutral-100 text-neutral-600"
+                        }`}>
+                        {item.stock}pcs
+                      </span>
+                    )}
+                  </div>
+                  <ItemImage blob={item.image} alt={item.name} />
+                </div>
+                <div className="grid-rows-2 p-2 flex flex-col w-full justify-between">
+                  <div className="row-span-1">
+                    <p className="font-bold text-sm">{item.name}</p>
+                    <p className="text-xs text-neutral-500">{item.category}</p>
+                  </div>
+                  <div className="flex w-full justify-between place-items-center row-span-1">
+                    <p className="font-semibold">{peso(item.price)}</p>
+                    {/* <button
+                      onClick={() => setDeleteItem(item)}
+                      aria-label={`Delete ${item.name}`}
+                      className=" rounded-full bg-red-400 p-2 text-white hover:bg-red-600">
+                      <TrashIcon className="size-4" />
+                    </button> */}
+                  </div>
+                </div>
               </a>
             ))}
           </div>
-          <hr />
-        </div>
-
-        <div className="flex flex-col gap-5">
-          {visible.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-neutral-300 p-10 text-center text-neutral-500">
-              No items found. Add your first item to start selling.
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-2 z-10">
-              {visible.map((item) => (
-                <a
-                  key={item.id}
-                  className="rounded-xl border border-neutral-400 grid grid-rows-6 gap-2 w-full relative h-full overflow-hidden">
-                  <div className="w-full rounded-xl bg-neutral-100 relative row-span-4 items-center justify-center flex">
-                    <div className="absolute bottom-0 right-0 p-2">
-                      {item.stock !== undefined && (
-                        <span
-                          className={`text-xs rounded-full px-2 py-1 border ${
-                            item.stock <= 5
-                              ? "bg-red-100 text-red-700"
-                              : "bg-neutral-100 text-neutral-600"
-                          }`}>
-                          {item.stock} left
-                        </span>
-                      )}
-                    </div>
-                    <ItemImage blob={item.image} alt={item.name} />
-                  </div>
-                  <div className="row-span-2 p-2 flex flex-col w-full gap-2 justify-between">
-                    <div>
-                      <p className="font-bold text-sm">{item.name}</p>
-                      <p className="text-xs text-neutral-500">
-                        {item.category}
-                      </p>
-                    </div>
-                    <div className="flex w-full justify-between place-items-center">
-                      <p className="font-semibold">{peso(item.price)}</p>
-                      <button
-                        onClick={() => setDeleteItem(item)}
-                        aria-label={`Delete ${item.name}`}
-                        className=" rounded-full bg-red-400 p-2 text-white hover:bg-red-600">
-                        <TrashIcon className="size-4" />
-                      </button>
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
-          )}
-        </div>
+        )}
       </div>
-      {deleteItem && (
+      {/* {deleteItem && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
           onClick={() => setDeleteItem(null)}>
@@ -142,12 +170,12 @@ export default function Products({ item }: { item: string }) {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* {itemToEdit && (
         <AddItemForm item={itemToEdit} onClose={() => setItemToEdit(null)} />
       )} */}
-    </>
+    </div>
   );
 }
 
@@ -178,39 +206,30 @@ function AddItemForm({ onClose }: { onClose: () => void }) {
 
   const categoryList = [
     {
-      title: "Stickers",
       value: "Stickers",
     },
     {
-      title: "Prints",
       value: "Prints",
     },
     {
-      title: "Photocards",
       value: "Photocards",
     },
     {
-      title: "Pins",
       value: "Pins",
     },
     {
-      title: "Keychain",
       value: "Keychain",
     },
     {
-      title: "Crochets",
       value: "Crochets",
     },
     {
-      title: "Coasters",
       value: "Coasters",
     },
     {
-      title: "Bookmarks",
       value: "Bookmarks",
     },
     {
-      title: "3D Prints",
       value: "3D Prints",
     },
   ];
@@ -222,11 +241,26 @@ function AddItemForm({ onClose }: { onClose: () => void }) {
       <form
         onSubmit={handleSubmit}
         onClick={(e) => e.stopPropagation()}
-        className="grid grid-rows-12 grid-cols-2 bg-(--accent) p-5 rounded border border-background justify-center items-center gap-2">
-        <div className="row-span-6 items-center justify-center flex flex-col col-span-2 gap-2">
+        className="grid grid-rows-12 grid-cols-2 bg-(--accent) p-5 rounded-xl border border-background justify-center items-center gap-2">
+        <span className="text-2xl">New Item</span>
+        <div className="row-span-4 items-center justify-center flex flex-col col-span-2 gap-2">
           {file && (
-            <div className="flex place-items-center aspect-square w-40 rounded-xl bg-neutral-100 object-center">
-              <ItemImage blob={file} alt="Preview" />
+            <div className="relative">
+              <div className="flex place-items-center justify-center aspect-square size-40 rounded-xl bg-neutral-100 object-cover outline-background p-2 outline">
+                <ItemImage blob={file} alt="Preview" />
+              </div>
+              <div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFile(null);
+                    setIsHidden(false);
+                  }}
+                  aria-label="Remove Photo"
+                  className="absolute z-20 -top-3 -right-3 rounded-full bg-red-400 p-2 text-white hover:bg-red-600">
+                  <XCircleIcon className="size-5" />
+                </button>
+              </div>
             </div>
           )}
           <label>
@@ -273,17 +307,16 @@ function AddItemForm({ onClose }: { onClose: () => void }) {
           value={category}
           className="col-span-2 focus:outline-none border border-background rounded-lg p-2 w-full appearance-none"
           onChange={(e) => setCategory(e.target.value)}
-          placeholder="Category"
           required>
           <option value="" disabled hidden>
             Select Category
           </option>
           {categoryList.map((c) => (
             <option
-              key={c.title}
+              key={c.value}
               value={c.value}
               className="border border-background rounded">
-              {c.title}
+              {c.value}
             </option>
           ))}
         </select>
@@ -299,6 +332,14 @@ function AddItemForm({ onClose }: { onClose: () => void }) {
         onClick={onClose}>
         Click anywhere outside to close
       </div>
+    </div>
+  );
+}
+
+function ShoppingCart() {
+  return (
+    <div>
+      <ShoppingBagIcon />
     </div>
   );
 }

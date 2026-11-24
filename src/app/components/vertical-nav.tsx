@@ -11,7 +11,7 @@ import {
   Bars3Icon,
   ArchiveBoxIcon,
 } from "@heroicons/react/24/outline";
-
+import { appPages } from "@/src/lib/pages";
 const navPages = [
   { page: "Dashboard", icon: <Squares2X2Icon /> },
   { page: "Products", icon: <ArchiveBoxIcon /> },
@@ -32,18 +32,17 @@ export default function VerticalNav({
   return (
     <>
       {/* Mobile: floating bottom bar, hidden from md and up */}
-      <nav className="md:hidden fixed bottom-5 inset-x-5 z-20 flex justify-between items-center p-2 rounded-full bg-(--accent) border border-black/30">
-        {navPages.map((navPage) => (
+      <nav className="md:hidden bottom-2 inset-x-5 z-20 flex justify-between items-center p-2 rounded-full bg-(--accent) border border-black/30 m-4">
+        {appPages.map((p) => (
           <button
-            key={navPage.page}
-            onClick={() => onPageChange(navPage.page)}
-            aria-label={navPage.page}
+            key={p.id}
+            onClick={() => onPageChange(p.id)}
             className={`flex w-15 justify-center items-center rounded-full p-2 transition-colors duration-300 text-(--text-secondary) ${
-              activePage === navPage.page
+              activePage === p.id
                 ? "bg-background text-white"
                 : "text-black hover:bg-white/10"
             }`}>
-            <span className="block w-5 ">{navPage.icon}</span>
+            <span className="block w-5 ">{p.icon}</span>
           </button>
         ))}
       </nav>
@@ -53,7 +52,7 @@ export default function VerticalNav({
         <button
           onClick={() => setCollapsed(!collapsed)}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className={`absolute top-3 left-3 z-10 size-9 p-1.5 rounded-full text-white hover:bg-white/10 `}>
+          className="absolute top-3 left-3 z-10 size-9 p-1.5 rounded-full text-white hover:bg-white/10 ">
           <Bars3Icon
             className={`${collapsed ? "text-(--text-secondary)" : "text-accent"}`}
           />

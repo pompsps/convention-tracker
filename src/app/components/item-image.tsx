@@ -13,5 +13,5 @@ export default function ItemImage({ blob, alt }: { blob?: Blob; alt: string }) {
   }, [blob]);
 
   if (!url) return <div className="h-full w-full bg-neutral-100" />;
-  return <img src={url} alt={alt} className=" w-full p-2" />;
+  return <img src={url} alt={alt} className=" p-2 m-0 object-cover size-30" />;
 }
