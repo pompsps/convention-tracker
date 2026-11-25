@@ -8,7 +8,7 @@ export default function ProductGrid({ items }: { items: Item[] }) {
   const [query, setQuery] = useState("");
   const [type, setType] = useState("All");
 
-  const categories = ["All", ...new Set(items.map((i) => i.type))];
+  const types = ["All", ...new Set(items.map((i) => i.type))];
   const visible = items.filter(
     (i) =>
       (type === "All" || i.type === type) &&
@@ -25,7 +25,7 @@ export default function ProductGrid({ items }: { items: Item[] }) {
       />
 
       <div className="flex gap-2 overflow-x-auto">
-        {categories.map((c) => (
+        {types.map((c) => (
           <button
             key={c}
             onClick={() => setType(c)}
