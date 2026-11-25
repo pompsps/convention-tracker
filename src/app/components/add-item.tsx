@@ -96,6 +96,7 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
 
   return (
     <div
+      data-no-swipe
       className="fixed inset-0 z-50 flex items-center md:items-center justify-center backdrop-blur-2xl p-10 flex-col h-screen"
       onClick={onClose}>
       <form
