@@ -105,7 +105,7 @@ export default function Products() {
               <a
                 key={item.id}
                 className="rounded-xl border border-neutral-400 w-full relative h-full overflow-hidden flex flex-col ">
-                <div className="size-full rounded-xl bg-neutral-100 relative row-span-4 items-center justify-center flex object-cover">
+                <div className="size-full rounded-xl relative row-span-4 items-center justify-center flex object-cover">
                   <div className="absolute top-0 left-0">
                     <VariantTag items={item} />
                   </div>
