@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Concert_One } from "next/font/google";
 import "./globals.css";
+import RegisterSW from "./components/register-sw";
 
 const concertOne = Concert_One({
   weight: "400",
@@ -25,7 +26,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${concertOne.className} h-full antialiased `}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+
+        <RegisterSW />
+      </body>
     </html>
   );
 }
