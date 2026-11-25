@@ -96,12 +96,12 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center md:items-center justify-center backdrop-blur-2xl p-10 flex-col h-full"
+      className="fixed inset-0 z-50 flex items-center md:items-center justify-center backdrop-blur-2xl p-10 flex-col h-screen"
       onClick={onClose}>
       <form
         onSubmit={handleSubmit}
         onClick={(e) => e.stopPropagation()}
-        className="flex flex-col bg-(--accent) p-5 rounded-xl border border-background justify-center gap-2 text-sm overflow-scroll">
+        className="flex flex-col bg-(--accent) p-5 rounded-xl border border-background  gap-2 text-sm overflow-auto h-screen">
         <span className="text-3xl">New Item</span>
 
         <div className="items-center justify-center flex flex-col gap-2 min-h-50">
@@ -263,7 +263,9 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
         {hasVariations && (
           <div className="flex flex-col gap-2">
             {variations.map((v) => (
-              <div key={v.id} className="grid grid-cols-2 gap-2 items-center">
+              <div
+                key={v.id}
+                className="grid grid-cols-2 gap-2 items-center border border-background p-2 rounded">
                 <div className="col-span-2 flex flex-col">
                   <span>Name</span>
                   <div className="flex w-full gap-2">
@@ -285,7 +287,7 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
                     </button>
                   </div>
                 </div>
-                <div>
+                <div className="col-span-1 flex flex-col">
                   <span>Price</span>
                   <input
                     value={v.price}
@@ -296,7 +298,7 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
                     className="focus:outline-none border border-background focus:border-(--text-secondary) rounded-lg p-2"
                   />
                 </div>
-                <div>
+                <div className="col-span-1 flex flex-col">
                   <span>Stock</span>
                   <input
                     value={v.stock}
