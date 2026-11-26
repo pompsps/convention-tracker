@@ -40,6 +40,12 @@ export type Convention = {
   closedAt?: number;
 };
 
+export type Expenses = {
+  id: string;
+  name: string;
+  amount: string;
+};
+
 export type Variation = {
   id: string;
   name: string;

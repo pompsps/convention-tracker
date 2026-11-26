@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Concert_One } from "next/font/google";
 import "./globals.css";
 import RegisterSW from "./components/register-sw";
+import { DayPicker } from "react-day-picker";
 
 const concertOne = Concert_One({
   weight: "400",

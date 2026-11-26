@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@import "react-day-picker/style.css" layer(components);
+
 .concert-one-regular {
   font-family: "Concert One", sans-serif;
   font-weight: 400;

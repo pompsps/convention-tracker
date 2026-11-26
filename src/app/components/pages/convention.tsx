@@ -9,14 +9,7 @@ import ItemImage from "@/src/app/components/item-image";
 
 import AddConventionForm from "../add-convention";
 
-import {
-  PlusIcon,
-  TrashIcon,
-  MagnifyingGlassIcon,
-  XCircleIcon,
-  PlusCircleIcon,
-  ShoppingBagIcon,
-} from "@heroicons/react/16/solid";
+import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
 
 export default function Conventions() {
   const conventionCount = useLiveQuery(() => db.conventions.count());
@@ -28,6 +21,8 @@ export default function Conventions() {
   const [addConvention, setAddConvention] = useState(false);
 
   const [collapse, setCollapse] = useState(true);
+
+  const visible = conventions?.filter((i) => ( ))
 
   return (
     <div className="gap-2 flex flex-col h-full min-h-0">

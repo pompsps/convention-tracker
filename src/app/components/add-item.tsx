@@ -97,11 +97,11 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
   return (
     <div
       data-no-swipe
-      className="fixed inset-0 z-50 flex items-center md:items-center justify-center backdrop-blur-2xl p-10 flex-col h-screen"
+      className="fixed inset-0 z-50 flex items-center md:items-center justify-center backdrop-blur-2xl p-10 md:p-15 lg:p-20 flex-col h-screen"
       onClick={onClose}>
-      <div className="flex flex-col bg-(--accent) p-5 rounded-xl border border-background  gap-2 text-sm overflow-auto h-screen justify-between">
+      <div className="flex flex-col bg-(--accent) rounded-xl border border-background  gap-2 text-sm overflow-auto h-screen justify-between w-full">
         <form
-          className="flex flex-col gap-2"
+          className="flex flex-col gap-2 p-5 relative text-xs lg:text-xl"
           onSubmit={handleSubmit}
           onClick={(e) => e.stopPropagation()}>
           <span className="text-3xl">New Item</span>
@@ -126,7 +126,7 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
               </div>
             )}
             <label
-              className={`size-20 justify-center items-center flex flex-col outline-dashed text-black/40 rounded-xl ${file ? "hidden" : "blocks"}`}>
+              className={`size-20 lg:size-50 justify-center items-center flex flex-col outline-dashed text-black/40 rounded-xl ${file ? "hidden" : "blocks"}`}>
               <input
                 hidden
                 type="file"
@@ -134,11 +134,14 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
                 id="choose-file"
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               />{" "}
-              <CameraIcon className="size-10" />
-              <span className="text-xs">Upload file</span>
+              <CameraIcon
+                className="size-10 lg:size-25
+              "
+              />
+              <span className="text-xs lg:text-xl">Upload file</span>
             </label>
           </div>
-          <div className="grid  grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <label className="col-span-2 flex flex-col">
               <span>Name</span>
               <input
@@ -320,20 +323,27 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
                 </div>
               ))}
 
-              <button
-                type="button"
-                onClick={addVariation}
-                className="rounded-lg border border-dashed border-background p-2">
-                + Add variation
-              </button>
+              <div className="flex w-full gap-2">
+                <button
+                  type="button"
+                  onClick={addVariation}
+                  className="rounded-lg border border-dashed border-background p-2 w-full">
+                  + Add variation
+                </button>
+                <button
+                  className="flex w-full bg-background justify-center p-2 rounded-lg "
+                  type="submit">
+                  Add item
+                </button>
+              </div>
             </div>
           )}
+          <button
+            className={`flex w-full bg-background justify-center p-2 rounded-lg ${hasVariations ? "hidden" : "block"}`}
+            type="submit">
+            Add item
+          </button>
         </form>
-        <button
-          className=" flex w-full bg-background col-span-2 items-center justify-center p-2 rounded-lg"
-          type="submit">
-          Add item
-        </button>
       </div>
       <div
         className="w-full justify-center items-center flex text-(--text-main)/70"
