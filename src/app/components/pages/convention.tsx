@@ -22,7 +22,7 @@ export default function Conventions() {
 
   const [collapse, setCollapse] = useState(true);
 
-  const visible = conventions?.filter((i) => ( ))
+  // const visible = conventions?.filter((i) => )
 
   return (
     <div className="gap-2 flex flex-col h-full min-h-0">
