@@ -16,6 +16,7 @@ import ViewItem from "../view-items";
 export default function Products() {
   const productCount = useLiveQuery(() => db.items.count());
   const items = useLiveQuery(() => db.items.toArray());
+
   const [query, setQuery] = useState("");
   const [type, setType] = useState("All");
   const [category, setCategory] = useState("");

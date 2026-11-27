@@ -29,6 +29,7 @@ export default function AddDate({
         <DayPicker
           mode="range"
           captionLayout="dropdown"
+          disabled={{ before: new Date() }}
           startMonth={new Date(2024, 0)}
           endMonth={new Date(2030, 11)}
           min={1}

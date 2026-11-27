@@ -1,7 +1,7 @@
 "use client";
 
 import { db, type Item, type Convention, type Expense } from "@/src/lib/db";
-
+import { tagColor } from "@/src/lib/tag-color";
 import CreatableSelect from "react-select/creatable";
 import {
   CalendarDateRangeIcon,
@@ -9,11 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import AddDate from "./add-date";
 
-import {
-  DayPicker,
-  type DateRange,
-  getDefaultClassNames,
-} from "react-day-picker";
+import { type DateRange } from "react-day-picker";
 import "react-day-picker/style.css";
 import React, { useState } from "react";
 
@@ -25,15 +21,16 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
   const [range, setRange] = useState<DateRange | undefined>();
   const [error, setError] = useState("");
   const [hasExpenses, setHasExpenses] = useState(false);
+  const [hasNotes, setHasNotes] = useState(false);
 
-  const defaults = getDefaultClassNames();
+  // const defaults = getDefaultClassNames();
 
-  const [hidden, setHidden] = useState(true);
+  // const [hidden, setHidden] = useState(true);
   const [addDate, setAddDate] = useState(false);
 
   type ExpensesDraft = {
     id: string;
-    name: string;
+    description: string;
     amount: string;
   };
   const [expenses, setExpenses] = useState<ExpensesDraft[]>([]);
@@ -52,12 +49,12 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
   const addExpenses = () =>
     setExpenses((prev) => [
       ...prev,
-      { id: crypto.randomUUID(), name: "", amount: "" },
+      { id: crypto.randomUUID(), description: "", amount: "" },
     ]);
 
   const updateExpenses = (
     id: string,
-    field: "name" | "amount",
+    field: "description" | "amount",
     value: string,
   ) =>
     setExpenses((prev) =>
@@ -81,21 +78,33 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
     const end = new Date(range.to ?? range.from);
     end.setHours(23, 59, 59, 999);
 
+    const cleanExpenses: Expense[] = hasExpenses
+      ? expenses
+          .filter(
+            (ex) =>
+              ex.description.trim() &&
+              Number.isFinite(Number(ex.amount)) &&
+              ex.amount !== "",
+          )
+          .map((ex) => ({
+            id: ex.id,
+            description: ex.description.trim(),
+            amount: Number(ex.amount),
+          }))
+      : [];
+
     setError("");
 
-    console.log({ name });
-    console.log(start, end);
-
-    // await db.conventions.add({
-    //   createdAt: Date.now(),
-    //   name,
-    //   location,
-    //   tags,
-    //   expenses,
-    //   notes,
-    //   startDate: start.getTime(),
-    //   endDate: end.getTime(),
-    // });
+    await db.conventions.add({
+      createdAt: Date.now(),
+      name: name.trim(),
+      location,
+      tags,
+      expenses: cleanExpenses,
+      notes: hasNotes ? notes.trim() : undefined,
+      startDate: start.getTime(),
+      endDate: end.getTime(),
+    });
 
     onClose();
   }
@@ -104,13 +113,13 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
     <div
       className="fixed inset-0 z-50 flex items-center md:items-center justify-center backdrop-blur-2xl p-10 flex-col h-full "
       onClick={onClose}>
-      <div className="flex flex-col bg-(--accent) rounded-xl border border-background  gap-2 text-sm overflow-auto h-screen justify-between w-full">
+      <div className="flex flex-col bg-(--accent) rounded-xl border border-background  gap-2 text-sm overflow-auto h-full justify-between w-full">
         <form
           data-no-swipe
-          className="flex flex-col gap-2 p-5 relative h-full"
+          className="flex flex-col gap-2 p-5 relative h-full overflow-auto"
           onSubmit={handleSubmit}
           onClick={(e) => e.stopPropagation()}>
-          <span className="text-3xl">New Item</span>
+          <span className="text-3xl">New Convention</span>
 
           <div className="grid  grid-cols-2 gap-2">
             <label className="col-span-2 flex flex-col">
@@ -137,19 +146,18 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
           </div>
 
           <div className="col-span-2">
-            <label className="flex flex-col">
-              Date
-              <div className="col-span-2 focus:outline-none border border-background rounded-lg p-2 flex w-full">
-                <button
-                  onClick={() => {
-                    setAddDate(!addDate);
-                  }}
-                />
+            <div className="flex flex-col">
+              <span>Date</span>
+              <button
+                type="button"
+                onClick={() => setAddDate(true)}
+                className="flex w-full items-center gap-2 rounded-lg border border-background p-2 text-left">
                 <CalendarDateRangeIcon className="size-5" />
                 <span>{dateLabel}</span>
-              </div>
-            </label>
+              </button>
+            </div>
 
+            {!error && <span className="text-red-500">{error}</span>}
             {addDate && (
               <AddDate
                 modalClose={() => setAddDate(false)}
@@ -157,8 +165,6 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
                 onChange={setRange}
               />
             )}
-
-            {!error && <span className="text-red-500">{error}</span>}
           </div>
 
           {hasExpenses && (
@@ -177,13 +183,14 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
                       </div>
 
                       <div className="col-span-3 flex flex-col">
-                        <span>Price</span>
+                        <span>Amount</span>
                       </div>
+
                       <div className="col-span-4 flex flex-col">
                         <input
-                          value={ex.name}
+                          value={ex.description}
                           onChange={(e) =>
-                            updateExpenses(ex.id, "name", e.target.value)
+                            updateExpenses(ex.id, "description", e.target.value)
                           }
                           placeholder="e.g. Food, Parking"
                           className="focus:outline-none border border-background focus:border-(--text-secondary) rounded-lg p-2"
@@ -217,30 +224,83 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
 
           <label className={`col-span-2 flex justify-between`}>
             {" "}
-            <div>
+            <div className="w-full flex">
               {!hasExpenses ? (
-                <a
+                <button
                   onClick={() => {
                     setHasExpenses(true);
                     if (expenses.length === 0) addExpenses();
                   }}>
                   + Add Expenses
-                </a>
+                </button>
               ) : (
-                <div className="flex w-full gap-2">
-                  <a
-                    type="button"
-                    onClick={addExpenses}
-                    className={`rounded-lg border border-dashed border-background p-2 w-full $`}>
-                    + Add Another Expenses
-                  </a>
-                </div>
+                <button
+                  type="button"
+                  onClick={addExpenses}
+                  className={`rounded-lg border border-dashed border-background p-2 w-full flex gap-2`}>
+                  + Add Another Expenses
+                </button>
               )}
             </div>
           </label>
-
+          <label>
+            {!hasNotes ? (
+              <a
+                onClick={() => {
+                  setHasNotes(true);
+                }}>
+                + Add Note
+              </a>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <div className="w-full flex items-center justify-between">
+                  <span>Note:</span>
+                  <div
+                    className="flex bg-red-400 rounded p-1 text-white"
+                    onClick={() => setHasNotes(false)}>
+                    <XCircleIcon className="w-5" />
+                    <span>Remove note</span>
+                  </div>
+                </div>
+                <textarea
+                  className="focus:outline-none border border-background focus:border-(--text-secondary) rounded-lg p-2 w-full resize-none"
+                  rows={4}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}></textarea>
+              </div>
+            )}
+          </label>
+          <label>
+            <div>
+              <CreatableSelect
+                placeholder="Tags"
+                isMulti
+                value={tags.map((t) => ({ value: t, label: t }))}
+                onChange={(selected) => setTags(selected.map((o) => o.value))}
+                instanceId="convention-tags"
+                styles={{
+                  multiValue: (base, state) => ({
+                    ...base,
+                    backgroundColor: tagColor(state.data.value).bg,
+                    borderRadius: "9999px",
+                  }),
+                  multiValueLabel: (base, state) => ({
+                    ...base,
+                    color: tagColor(state.data.value).text,
+                    paddingLeft: "0.5rem",
+                  }),
+                  multiValueRemove: (base, state) => ({
+                    ...base,
+                    color: tagColor(state.data.value).text,
+                    borderRadius: "9999px",
+                    ":hover": { backgroundColor: "transparent", opacity: 0.6 },
+                  }),
+                }}
+              />
+            </div>
+          </label>
           <button
-            className="flex w-full bg-background justify-center p-2 rounded-lg $"
+            className="flex w-full bg-background justify-center p-2 rounded-lg"
             type="submit">
             Add item
           </button>
