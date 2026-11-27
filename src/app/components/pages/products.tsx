@@ -45,9 +45,9 @@ export default function Products() {
     <div className="gap-2 flex flex-col h-full min-h-0">
       <div className="gap-2 flex flex-col">
         <div className="grid grid-cols-6 gap-1">
-          <div className="col-span-3 flex flex-col justify-center">
+          <div className="col-span-3 flex flex-col justify-center bg-(--compliment) border border-neutral-400 rounded-lg px-2">
             <div className="flex gap-2">
-              <span className="text-2xl">{productCount}</span>{" "}
+              <span className="text-xl">{productCount}</span>{" "}
               <p className="justify-center  flex flex-col text-xs">
                 products found
               </p>
@@ -60,7 +60,7 @@ export default function Products() {
                 setAddBundle(!addBundle);
                 setCollapse(true);
               }}
-              className="text-(--accent) rounded-l-xl p-2 bg-(--accent-secondary) justify-center items-center flex w-full">
+              className="text-(--accent) rounded-l-lg p-2 bg-(--accent-secondary) justify-center items-center flex w-full">
               <EllipsisVerticalIcon className="w-6" />
             </button>
           </div>
@@ -71,7 +71,7 @@ export default function Products() {
                 setAddItem(!addItem);
                 setCollapse(true);
               }}
-              className="text-(--accent) rounded-r-xl p-2 bg-(--accent-secondary) justify-center items-center flex w-full col-span-2">
+              className="text-(--accent) rounded-r-lg p-2 bg-(--accent-secondary) justify-center items-center flex w-full col-span-2">
               <span>Add Item</span>
             </button>
           </div>
@@ -124,7 +124,7 @@ export default function Products() {
             {visible.map((item) => (
               <div
                 key={item.id}
-                className="rounded-xl border border-neutral-400 w-full relative h-full flex flex-col"
+                className="bg-(--compliment) rounded-xl border border-neutral-400 w-full relative h-full flex flex-col"
                 onClick={() => {
                   setViewItem(!viewItem);
                   setSelectedId(item.id);

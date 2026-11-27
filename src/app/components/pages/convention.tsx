@@ -20,11 +20,7 @@ import {
 
 import { useStartSelling } from "@/src/lib/sell-context";
 
-export default function Conventions({
-  conventionId,
-}: {
-  conventionId: number;
-}) {
+export default function Conventions() {
   const [now, setNow] = useState(() => Date.now());
 
   const startSelling = useStartSelling();

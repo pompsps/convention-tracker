@@ -10,7 +10,7 @@ import {
 import Dashboard from "@/src/app/components/pages/dashboard";
 import Products from "@/src/app/components/pages/products";
 import Sales from "@/src/app/components/pages/sales";
-import Reports from "@/src/app/components/pages/convention";
+import Conventions from "@/src/app/components/pages/convention";
 import Settings from "@/src/app/components/pages/setting";
 
 export type AppPage = {
@@ -41,7 +41,7 @@ export const appPages: AppPage[] = [
     id: "convention",
     title: "Conventions",
     icon: <TableCellsIcon />,
-    Component: Reports,
+    Component: Conventions,
   },
   {
     id: "settings",

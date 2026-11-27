@@ -28,6 +28,7 @@
   --text-main: #363636;
   --text-secondary: #6e11b0;
   --accent-border: #9d40e0;
+  --compliment: #ffffcc;
 }
 
 @theme inline {
