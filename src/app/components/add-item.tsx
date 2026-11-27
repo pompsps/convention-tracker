@@ -10,14 +10,35 @@ import ItemImage from "@/src/app/components/item-image";
 
 import { CameraIcon, XCircleIcon } from "@heroicons/react/16/solid";
 
-export default function AddItemForm({ onClose }: { onClose: () => void }) {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [type, setType] = useState("");
-  const [stock, setStock] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [hasVariations, setHasVariations] = useState(false);
+export default function AddItemForm({
+  onClose,
+  item,
+}: {
+  onClose: () => void;
+  item?: Item; // present = editing, missing = adding
+}) {
+  const isEditing = item !== undefined;
+
+  const [name, setName] = useState(item?.name ?? "");
+  const [price, setPrice] = useState(item ? String(item.price) : "");
+  const [category, setCategory] = useState(item?.category ?? "");
+  const [type, setType] = useState(item?.type ?? "");
+  const [stock, setStock] = useState(
+    item?.stock !== undefined ? String(item.stock) : "",
+  );
+  const [file, setFile] = useState<Blob | null>(item?.image ?? null);
+
+  const [hasVariations, setHasVariations] = useState(
+    (item?.variations?.length ?? 0) > 0,
+  );
+  const [variations, setVariations] = useState<VariationDraft[]>(
+    (item?.variations ?? []).map((v) => ({
+      id: v.id,
+      name: v.name,
+      price: v.price !== undefined ? String(v.price) : "",
+      stock: v.stock !== undefined ? String(v.stock) : "",
+    })),
+  );
 
   type VariationDraft = {
     id: string;
@@ -25,7 +46,6 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
     price: string;
     stock: string;
   };
-  const [variations, setVariations] = useState<VariationDraft[]>([]);
 
   const addVariation = () =>
     setVariations((prev) => [
@@ -74,23 +94,22 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
           }))
       : [];
 
-    await db.items.add({
+    const data = {
       name,
       price: Number(price),
       type,
       category,
       stock: stock ? Number(stock) : undefined,
-      image: file ?? undefined, // a File is a Blob, so it stores directly
+      image: file ?? undefined,
       variations: cleanVariations,
-    });
-    setName("");
-    setPrice("");
-    setStock("");
-    setType("");
-    setCategory("");
-    setFile(null);
-    setVariations([]);
-    setHasVariations(false);
+    };
+
+    if (item) {
+      await db.items.update(item.id, data);
+    } else {
+      await db.items.add(data);
+    }
+
     onClose();
   }
 
@@ -104,7 +123,9 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
           className="flex flex-col gap-2 p-5 relative text-xs lg:text-xl"
           onSubmit={handleSubmit}
           onClick={(e) => e.stopPropagation()}>
-          <span className="text-3xl">New Item</span>
+          <span className="text-xl">
+            {isEditing ? "Editing Item" : "New Item"}
+          </span>
 
           <div className="items-center justify-center flex flex-col gap-2 min-h-50">
             {file && (
@@ -322,27 +343,35 @@ export default function AddItemForm({ onClose }: { onClose: () => void }) {
                   </div>
                 </div>
               ))}
-
-              <div className="flex w-full gap-2">
-                <button
-                  type="button"
-                  onClick={addVariation}
-                  className="rounded-lg border border-dashed border-background p-2 w-full">
-                  + Add variation
-                </button>
-                <button
-                  className="flex w-full bg-background justify-center p-2 rounded-lg "
-                  type="submit">
-                  Add item
-                </button>
-              </div>
             </div>
           )}
-          <button
+          {hasVariations ? (
+            <div className="flex w-full gap-2">
+              <button
+                type="button"
+                onClick={addVariation}
+                className="rounded-lg border border-dashed border-background p-2 w-full">
+                + Add variation
+              </button>
+              <button
+                className={`${hasVariations ? "flex w-full bg-background justify-center p-2 rounded-lg" : "flex w-full bg-background justify-center p-2 rounded-lg"}
+              type="submit`}>
+                {isEditing ? "Save Changes" : "Add item"}
+              </button>
+            </div>
+          ) : (
+            <button
+              className={`flex w-full bg-background justify-center p-2 rounded-lg`}
+              type="submit">
+              {isEditing ? "Save Changes" : "Add item"}
+            </button>
+          )}
+
+          {/* <button
             className={`flex w-full bg-background justify-center p-2 rounded-lg ${hasVariations ? "hidden" : "block"}`}
             type="submit">
             Add item
-          </button>
+          </button> */}
         </form>
       </div>
       <div

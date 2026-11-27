@@ -44,7 +44,12 @@
   }
 } */
 
+html,
 body {
   background: var(--background);
   color: var(--text-main);
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* page itself never scrolls */
+  overscroll-behavior: none; /* stops pull/bounce scrolling */
 }

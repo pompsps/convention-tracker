@@ -5,7 +5,15 @@
 import { peso } from "@/src/lib/data";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, type Item } from "@/src/lib/db";
-export default function Dashboard() {
+
+import { appPages } from "@/src/lib/pages";
+export default function Dashboard({
+  activePage,
+  onPageChange,
+}: {
+  activePage: string;
+  onPageChange: (page: string) => void;
+}) {
   const productCount = useLiveQuery(() => db.items.count());
   const dashCategories = [
     {

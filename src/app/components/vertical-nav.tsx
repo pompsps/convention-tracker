@@ -12,6 +12,7 @@ import {
   ArchiveBoxIcon,
 } from "@heroicons/react/24/outline";
 import { appPages } from "@/src/lib/pages";
+
 const p = [
   { page: "Dashboard", icon: <Squares2X2Icon /> },
   { page: "Products", icon: <ArchiveBoxIcon /> },

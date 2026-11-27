@@ -2,24 +2,28 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, type Item } from "@/src/lib/db";
+// import { GetData } from '../assets/getData'
 
 import { peso } from "@/src/lib/data";
 import { useState } from "react";
+
 import ItemImage from "@/src/app/components/item-image";
 
 import { MagnifyingGlassIcon, XCircleIcon } from "@heroicons/react/16/solid";
 
 import AddItemForm from "../add-item";
+import ViewItem from "../view-items";
 export default function Products() {
   const productCount = useLiveQuery(() => db.items.count());
   const items = useLiveQuery(() => db.items.toArray());
   const [query, setQuery] = useState("");
   const [type, setType] = useState("All");
   const [category, setCategory] = useState("");
-  const [hasVariant, setHasVariant] = useState(false);
 
   const [addItem, setAddItem] = useState(false);
-  const [deleteItem, setDeleteItem] = useState<Item | null>(null);
+  const [viewItem, setViewItem] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [editingItem, setEditingItem] = useState<Item | null>(null);
 
   const [collapse, setCollapse] = useState(true);
 
@@ -36,7 +40,7 @@ export default function Products() {
 
   return (
     <div className="gap-2 flex flex-col h-full min-h-0">
-      <div className="gap-2 flex flex-col">
+      <div className="gap-2 flex flex-col" onClick={(e) => e.stopPropagation()}>
         <div className="grid-cols-3 grid">
           <div className="col-span-2">
             <div className="flex flex-col">
@@ -102,9 +106,14 @@ export default function Products() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 z-10 overflow-scroll">
             {visible.map((item) => (
-              <a
+              <div
                 key={item.id}
-                className="rounded-xl border border-neutral-400 w-full relative h-full overflow-hidden flex flex-col ">
+                className="rounded-xl border border-neutral-400 w-full relative h-full overflow-hidden flex flex-col"
+                onClick={() => {
+                  setViewItem(!viewItem);
+                  setSelectedId(item.id);
+                  console.log(item.name);
+                }}>
                 <div className="size-full rounded-xl relative row-span-4 items-center justify-center flex object-cover">
                   <div className="absolute top-0 left-0">
                     <VariantTag items={item} />
@@ -144,11 +153,26 @@ export default function Products() {
                     </div>
                   </div>
                 </div>
-              </a>
+              </div>
             ))}
           </div>
         )}
       </div>
+
+      {selectedId !== null && viewItem && (
+        <ViewItem
+          onClose={() => setViewItem(false)}
+          onEdit={(item) => {
+            setSelectedId(null);
+            setEditingItem(item);
+          }}
+          itemId={selectedId}
+        />
+      )}
+
+      {editingItem && (
+        <AddItemForm item={editingItem} onClose={() => setEditingItem(null)} />
+      )}
     </div>
   );
 }
