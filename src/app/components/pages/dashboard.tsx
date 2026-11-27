@@ -2,9 +2,8 @@
 
 // import ProductGrid from "../product-grid";
 "use client";
-import { peso } from "@/src/lib/data";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db, type Item } from "@/src/lib/db";
+import { db } from "@/src/lib/db";
 export default function Dashboard() {
   const productCount = useLiveQuery(() => db.items.count());
   const dashCategories = [

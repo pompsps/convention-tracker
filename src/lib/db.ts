@@ -32,7 +32,7 @@ export type Convention = {
   createdAt: number; // Date.now()
   name: string;
   location?: string;
-  tags: string[];
+  tags?: string[];
   expenses: Expense[];
   notes?: string;
   startDate: number;

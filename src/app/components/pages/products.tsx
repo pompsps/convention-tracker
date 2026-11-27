@@ -2,17 +2,17 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, type Item } from "@/src/lib/db";
-// import { GetData } from '../assets/getData'
+import { getStock, PriceLabel, Category, VariantTag } from "../assets/getData";
 
-import { peso } from "@/src/lib/data";
 import { useState } from "react";
 
 import ItemImage from "@/src/app/components/item-image";
 
-import { MagnifyingGlassIcon, XCircleIcon } from "@heroicons/react/16/solid";
+import { MagnifyingGlassIcon } from "@heroicons/react/16/solid";
 
 import AddItemForm from "../add-item";
 import ViewItem from "../view-items";
+import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 export default function Products() {
   const productCount = useLiveQuery(() => db.items.count());
   const items = useLiveQuery(() => db.items.toArray());
@@ -22,6 +22,8 @@ export default function Products() {
   const [category, setCategory] = useState("");
 
   const [addItem, setAddItem] = useState(false);
+  const [addBundle, setAddBundle] = useState(false);
+
   const [viewItem, setViewItem] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [editingItem, setEditingItem] = useState<Item | null>(null);
@@ -41,22 +43,35 @@ export default function Products() {
 
   return (
     <div className="gap-2 flex flex-col h-full min-h-0">
-      <div className="gap-2 flex flex-col" onClick={(e) => e.stopPropagation()}>
-        <div className="grid-cols-3 grid">
-          <div className="col-span-2">
-            <div className="flex flex-col">
-              <span className="text-2xl">Your Stash</span>
-              <span>{productCount} products total!</span>
+      <div className="gap-2 flex flex-col">
+        <div className="grid grid-cols-6 gap-1">
+          <div className="col-span-3 flex flex-col justify-center">
+            <div className="flex gap-2">
+              <span className="text-2xl">{productCount}</span>{" "}
+              <p className="justify-center  flex flex-col text-xs">
+                products found
+              </p>
             </div>
           </div>
-          <div className="flex flex-col justify-center items-center">
+          <div className="col-span-1">
+            <button
+              type="button"
+              onClick={() => {
+                setAddBundle(!addBundle);
+                setCollapse(true);
+              }}
+              className="text-(--accent) rounded-l-xl p-2 bg-(--accent-secondary) justify-center items-center flex w-full">
+              <EllipsisVerticalIcon className="w-6" />
+            </button>
+          </div>
+          <div className="col-span-2">
             <button
               type="button"
               onClick={() => {
                 setAddItem(!addItem);
                 setCollapse(true);
               }}
-              className="text-(--accent) rounded-xl p-2 bg-(--accent-secondary) justify-center items-center flex w-full col-span-1 col-start-3">
+              className="text-(--accent) rounded-r-xl p-2 bg-(--accent-secondary) justify-center items-center flex w-full col-span-2">
               <span>Add Item</span>
             </button>
           </div>
@@ -109,7 +124,7 @@ export default function Products() {
             {visible.map((item) => (
               <div
                 key={item.id}
-                className="rounded-xl border border-neutral-400 w-full relative h-full overflow-hidden flex flex-col"
+                className="rounded-xl border border-neutral-400 w-full relative h-full flex flex-col"
                 onClick={() => {
                   setViewItem(!viewItem);
                   setSelectedId(item.id);
@@ -146,7 +161,7 @@ export default function Products() {
                           className={`text-sm rounded-lg px-2 py-1 border ${
                             getStock(item)! <= 5
                               ? "bg-red-100 text-red-700"
-                              : "bg-neutral-100 text-neutral-600"
+                              : " text-neutral-600"
                           }`}>
                           {getStock(item)} pcs
                         </span>
@@ -176,124 +191,4 @@ export default function Products() {
       )}
     </div>
   );
-}
-
-function VariantTag({ items }: { items: Item }) {
-  const variantCount = items.variations?.length ?? 0;
-  if (variantCount === 0) return null;
-
-  return (
-    <div className="border rounded-lg m-1 p-1 size-full text-sm bg-background flex justify-center">
-      <div>{variantCount} Variants</div>
-    </div>
-  );
-}
-
-function Category({ items }: { items: string }) {
-  if (items !== "") {
-    return <p>- {items}</p>;
-  }
-  return null;
-}
-
-function getStock(item: Item): number | undefined {
-  const tracked = (item.variations ?? []).filter((v) => v.stock !== undefined);
-
-  if (tracked.length > 0) {
-    return tracked.reduce((sum, v) => sum + (v.stock ?? 0), 0);
-  }
-  return item.stock; // no variations, or none of them track stock
-}
-
-function PriceLabel({ item }: { item: Item }) {
-  const prices = (item.variations ?? [])
-    .map((v) => v.price ?? item.price)
-    .sort((a, b) => a - b); // lowest first; .map() already made a new array, so this is safe
-
-  if (prices.length === 0) return <span>{peso(item.price)}</span>;
-
-  const min = prices[0];
-  const max = prices[prices.length - 1];
-
-  return <span>{min === max ? peso(min) : `${peso(min)} – ${peso(max)}`}</span>;
-}
-
-// function ShoppingCart() {
-//   return (
-//     <div>
-//       <ShoppingBagIcon />
-//     </div>
-//   );
-// }
-
-// function StickyHeader() {
-//   const [isVisible, setIsVisible] = useState(true);
-//   const lastScrollY = useRef(0);
-//   const ticking = useRef(false);
-
-//   useEffect(() => {
-//     const handleScroll = () => {
-//       if (ticking.current) return;
-
-//       ticking.current = true;
-//       requestAnimationFrame(() => {
-//         const currentScrollY = window.scrollY;
-
-//         if (currentScrollY < 10) {
-//           setIsVisible(true);
-//         } else if (currentScrollY > lastScrollY.current) {
-//           setIsVisible(false);
-//         } else {
-//           setIsVisible(true);
-//         }
-
-//         lastScrollY.current = currentScrollY;
-//         ticking.current = false;
-//       });
-//     };
-
-//     window.addEventListener("scroll", handleScroll, { passive: true });
-//     return () => window.removeEventListener("scroll", handleScroll);
-//   }, []);
-
-//   return <div></div>;
-// }
-
-{
-  /* {deleteItem && (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-    onClick={() => setDeleteItem(null)}>
-    <div
-      onClick={(e) => e.stopPropagation()}
-      className="w-full max-w-sm rounded-2xl bg-white p-6 text-black flex flex-col gap-4">
-      <h2 className="text-xl font-bold">Delete item?</h2>
-      <p className="text-sm text-neutral-600">
-        &quot;{deleteItem.name}&quot; will be removed. This can&apos;t be
-        undone.
-      </p>
-      <div className="flex justify-end gap-3">
-        <button
-          onClick={() => setDeleteItem(null)}
-          className="rounded-xl px-4 py-3 hover:bg-neutral-100">
-          Cancel
-        </button>
-        <button
-          onClick={async () => {
-            await db.items.delete(deleteItem.id);
-            setDeleteItem(null);
-          }}
-          className="rounded-xl bg-red-600 px-4 py-3 text-white font-medium">
-          Delete
-        </button>
-      </div>
-    </div>
-  </div>
-)} */
-}
-
-{
-  /* {itemToEdit && (
-  <AddItemForm item={itemToEdit} onClose={() => setItemToEdit(null)} />
-)} */
 }

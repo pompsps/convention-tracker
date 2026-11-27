@@ -30,7 +30,7 @@ export default function ProductGrid({ items }: { items: Item[] }) {
             key={c}
             onClick={() => setType(c)}
             className={`shrink-0 rounded-full px-4 py-2 text-sm ${
-              type === c ? "bg-emerald-700 text-white" : "bg-neutral-100"
+              type === c ? "bg-emerald-700 text-white" : ""
             }`}>
             {c}
           </button>
@@ -47,7 +47,7 @@ export default function ProductGrid({ items }: { items: Item[] }) {
             <div
               key={item.id}
               className="rounded-2xl border border-neutral-200 p-4 flex flex-col gap-3">
-              <div className="aspect-square rounded-xl bg-neutral-100" />{" "}
+              <div className="aspect-square rounded-xl " />{" "}
               {/* photo goes here */}
               <div>
                 <p className="font-medium">{item.name}</p>
@@ -60,7 +60,7 @@ export default function ProductGrid({ items }: { items: Item[] }) {
                     className={`text-xs rounded-full px-2 py-1 ${
                       item.stock <= 5
                         ? "bg-red-100 text-red-700"
-                        : "bg-neutral-100 text-neutral-600"
+                        : " text-neutral-600"
                     }`}>
                     {item.stock} left
                   </span>

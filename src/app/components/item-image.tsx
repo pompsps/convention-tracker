@@ -13,7 +13,7 @@ export default function ItemImage({ blob, alt }: { blob?: Blob; alt: string }) {
     return () => URL.revokeObjectURL(url);
   }, [blob]);
 
-  if (!blob) return <div className="h-full w-full bg-neutral-100" />;
+  if (!blob) return <div className="h-full w-full " />;
   return (
     <img
       ref={imgRef}

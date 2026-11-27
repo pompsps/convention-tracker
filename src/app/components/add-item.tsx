@@ -130,7 +130,7 @@ export default function AddItemForm({
           <div className="items-center justify-center flex flex-col gap-2 min-h-50">
             {file && (
               <div className="relative">
-                <div className="flex place-items-center justify-center aspect-square size-40 rounded-xl bg-neutral-100 object-cover outline-background p-2">
+                <div className="flex place-items-center justify-center aspect-square size-40 rounded-xl  object-cover outline-background p-2">
                   <ItemImage blob={file} alt="Preview" />
                 </div>
                 <div className="flex justify-center  w-full">

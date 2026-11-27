@@ -13,27 +13,47 @@ import { type DateRange } from "react-day-picker";
 import "react-day-picker/style.css";
 import React, { useState } from "react";
 
-export default function AddConvention({ onClose }: { onClose: () => void }) {
-  const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
-  const [tags, setTags] = useState<string[]>([]);
-  const [notes, setNotes] = useState("");
-  const [range, setRange] = useState<DateRange | undefined>();
+export default function AddConvention({
+  onClose,
+  convention,
+}: {
+  onClose: () => void;
+  convention?: Convention;
+}) {
+  const isEditing = convention !== undefined;
+
+  const [name, setName] = useState(convention?.name ?? "");
+  const [location, setLocation] = useState(convention?.location ?? "");
+  const [tags, setTags] = useState<string[]>(convention?.tags ?? []);
+  const [notes, setNotes] = useState(convention?.notes ?? "");
+  const [range, setRange] = useState<DateRange | undefined>(
+    convention
+      ? {
+          from: new Date(convention.startDate),
+          to: new Date(convention.endDate),
+        }
+      : undefined,
+  );
   const [error, setError] = useState("");
-  const [hasExpenses, setHasExpenses] = useState(false);
-  const [hasNotes, setHasNotes] = useState(false);
+  const [hasExpenses, setHasExpenses] = useState(
+    (convention?.expenses?.length ?? 0) > 0,
+  );
+  const [hasNotes, setHasNotes] = useState((convention?.notes ?? "") !== "");
 
-  // const defaults = getDefaultClassNames();
+  const [expenses, setExpenses] = useState<ExpensesDraft[]>(
+    (convention?.expenses ?? []).map((ex) => ({
+      id: ex.id,
+      description: ex.description,
+      amount: ex.amount !== undefined ? String(ex.amount) : "",
+    })),
+  );
 
-  // const [hidden, setHidden] = useState(true);
   const [addDate, setAddDate] = useState(false);
-
   type ExpensesDraft = {
     id: string;
     description: string;
     amount: string;
   };
-  const [expenses, setExpenses] = useState<ExpensesDraft[]>([]);
 
   const fmt = (d: Date) =>
     d.toLocaleDateString(undefined, {
@@ -95,8 +115,7 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
 
     setError("");
 
-    await db.conventions.add({
-      createdAt: Date.now(),
+    const data = {
       name: name.trim(),
       location,
       tags,
@@ -104,7 +123,13 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
       notes: hasNotes ? notes.trim() : undefined,
       startDate: start.getTime(),
       endDate: end.getTime(),
-    });
+    };
+
+    if (convention) {
+      await db.conventions.update(convention.id, data);
+    } else {
+      await db.conventions.add({ ...data, createdAt: Date.now() });
+    }
 
     onClose();
   }
@@ -119,7 +144,9 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
           className="flex flex-col gap-2 p-5 relative h-full overflow-auto"
           onSubmit={handleSubmit}
           onClick={(e) => e.stopPropagation()}>
-          <span className="text-3xl">New Convention</span>
+          <span className="text-3xl">
+            {isEditing ? "Editing Convention" : "New Convention"}
+          </span>
 
           <div className="grid  grid-cols-2 gap-2">
             <label className="col-span-2 flex flex-col">
@@ -222,11 +249,12 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
-          <label className={`col-span-2 flex justify-between`}>
+          <div className={`col-span-2 flex justify-between`}>
             {" "}
             <div className="w-full flex">
               {!hasExpenses ? (
                 <button
+                  type="button"
                   onClick={() => {
                     setHasExpenses(true);
                     if (expenses.length === 0) addExpenses();
@@ -242,8 +270,8 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
                 </button>
               )}
             </div>
-          </label>
-          <label>
+          </div>
+          <div>
             {!hasNotes ? (
               <a
                 onClick={() => {
@@ -269,8 +297,8 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
                   onChange={(e) => setNotes(e.target.value)}></textarea>
               </div>
             )}
-          </label>
-          <label>
+          </div>
+          <div>
             <div>
               <CreatableSelect
                 placeholder="Tags"
@@ -298,11 +326,11 @@ export default function AddConvention({ onClose }: { onClose: () => void }) {
                 }}
               />
             </div>
-          </label>
+          </div>
           <button
             className="flex w-full bg-background justify-center p-2 rounded-lg"
             type="submit">
-            Add item
+            {isEditing ? "Save changes" : "Add Convention"}
           </button>
         </form>
       </div>
