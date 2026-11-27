@@ -2,24 +2,8 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Squares2X2Icon,
-  BuildingStorefrontIcon,
-  SparklesIcon,
-  Cog6ToothIcon,
-  TableCellsIcon,
-  Bars3Icon,
-  ArchiveBoxIcon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon } from "@heroicons/react/24/outline";
 import { appPages } from "@/src/lib/pages";
-
-const p = [
-  { page: "Dashboard", icon: <Squares2X2Icon /> },
-  { page: "Products", icon: <ArchiveBoxIcon /> },
-  { page: "Sales", icon: <SparklesIcon /> },
-  { page: "Reports", icon: <TableCellsIcon /> },
-  { page: "Settings", icon: <Cog6ToothIcon /> },
-];
 
 export default function VerticalNav({
   activePage,

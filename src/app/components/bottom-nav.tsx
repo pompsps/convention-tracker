@@ -12,13 +12,6 @@ import {
   ArchiveBoxIcon,
 } from "@heroicons/react/24/outline";
 import { appPages } from "@/src/lib/pages";
-const ps = [
-  { page: "Dashboard", icon: <Squares2X2Icon /> },
-  { page: "Products", icon: <ArchiveBoxIcon /> },
-  { page: "Sales", icon: <SparklesIcon /> },
-  { page: "Reports", icon: <TableCellsIcon /> },
-  { page: "Settings", icon: <Cog6ToothIcon /> },
-];
 
 export default function VerticalNav({
   activePage,
